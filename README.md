@@ -6,3 +6,7 @@
 ==============================
 
 For inference , check the inference.py file 
+
+get to last
+
+https://www.kaggle.com/code/pingzy/notebooka5836571d4
