@@ -1,28 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import uploadToCloudinary from '../../../../lib/cloudinary';
-import ImageResult from "../../../../models/ImageResults"
 import { NextRequest, NextResponse } from 'next/server';
-import { Readable } from 'stream';
-import connectToDB from '../../../../lib/mongodb';
-// import { Image } from 'cloudinary/types/v2';
 import { imageAnalysis } from '../../../../lib/imageAnalysis';
+import connectToDB from '../../../../lib/mongodb';
+import uploadToCloudinary from '../../../../lib/cloudinary';
+import ImageResult from '../../../../models/ImageResults';
 
 console.log("🔁 API Route Initialized: /api/analyze");
-
-const uploadDir = path.join(process.cwd(), './public/temp');
-console.log("📂 Temp Upload Directory:", uploadDir);
-fs.mkdirSync(uploadDir, { recursive: true });
-console.log("✅ Upload directory ensured");
-
-function bufferToStream(buffer: Buffer): Readable {
-  const readable = new Readable();
-  readable.push(buffer);
-  readable.push(null);
-  return readable;
-}
 
 export async function POST(req: NextRequest) {
   console.log("📩 POST request received");
@@ -40,42 +22,39 @@ export async function POST(req: NextRequest) {
 
     console.log("📸 File found:", file.name);
 
-    const bytes = await file.arrayBuffer();
-    console.log("📥 File buffer extracted");
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    console.log("📥 File buffer created");
 
-    const buffer = Buffer.from(bytes);
-
-    console.log("✅ File written locally");
-
+    // Connect to MongoDB
     if (typeof connectToDB === 'function') {
       await connectToDB();
+      console.log("✅ MongoDB connected");
     } else {
-      console.error("❌ connectToDB is not a function");
-      throw new Error("Database connection failed");
+      throw new Error("❌ connectToDB is not a function");
     }
-    console.log("✅ MongoDB connected");
 
+    // Upload to Cloudinary
     const cloudinaryUrl = await uploadToCloudinary(buffer, file.name);
     console.log("☁️ Uploaded to Cloudinary:", cloudinaryUrl);
-    let analysis:any;
-    const handleAnalysis = async () => {
-      analysis = await imageAnalysis(cloudinaryUrl);
-      console.log("🔍 Final AI Type:", analysis); // You'll get the actual value here
-    };
-    await handleAnalysis()
 
-    console.log("ai generated--------------<>>>>", analysis)
+    // Analyze image using your ML model
+    const analysis: any = await imageAnalysis(cloudinaryUrl);
+    console.log("🔍 AI Analysis:", analysis);
+
+    // Simulated results (replace with real values if needed)
     const fakeResult = {
       label: 'AI-generated',
       confidence: 0,
-      aiProbability: (analysis?.ai_generated)*100,
+      aiProbability: (analysis?.ai_generated || 0) * 100,
       photoshopProbability: Math.random() * 100,
-      originalProbability:(100-((analysis?.ai_generated)*100)),
+      originalProbability: 100 - ((analysis?.ai_generated || 0) * 100),
       extraData: 'Simulated prediction data',
     };
 
     console.log("🧠 Analysis result prepared");
 
+    // Save to MongoDB
     const saved = await ImageResult.create({
       imageUrl: cloudinaryUrl,
       ...fakeResult,
@@ -90,20 +69,5 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     console.error("🔥 ERROR during analysis:", err.message || err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
-  } finally {
-    try {
-      const allFiles = fs.readdirSync(uploadDir);
-      console.log("🧹 Temp files before cleanup:", allFiles);
-
-      const latestFile = allFiles.sort((a, b) => fs.statSync(path.join(uploadDir, b)).mtime.getTime() - fs.statSync(path.join(uploadDir, a)).mtime.getTime())[0];
-      const latestFilePath = path.join(uploadDir, latestFile);
-
-      if (fs.existsSync(latestFilePath)) {
-        fs.unlinkSync(latestFilePath);
-        console.log("🧹 Temp file deleted:", latestFilePath);
-      }
-    } catch (cleanupErr) {
-      console.warn("⚠️ Cleanup failed:", cleanupErr);
-    }
   }
 }

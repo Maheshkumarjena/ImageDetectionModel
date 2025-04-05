@@ -40,4 +40,5 @@ const uploadToCloudinary = (buffer: Buffer, filename: string): Promise<string> =
     bufferToStream(buffer).pipe(stream);
   });
 };
+
 export default uploadToCloudinary;
