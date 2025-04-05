@@ -29,10 +29,16 @@ const ProbabilityBar = ({ label, value, color }: { label: string; value: number;
 
 const AnalysisResult: React.FC<AnalysisResultProps> = ({ result }) => {
   if (!result) return null;
+  console.log('result-------------------->', result);
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md text-gray-800">
-      <h2 className="mb-6 text-2xl font-bold text-center">Analysis Result</h2>
+
+      {result.originalProbability===0 && result.aiProbability===0 && result.photoshopProbability===0 ?
+      <h2 className="mb-6 text-2xl font-bold text-green-400 text-center">Analyzing Image.....</h2> :
+      <h2 className="mb-6 text-2xl font-bold text-blue-400 text-center">Analysis Result</h2>
+
+       }
       <div className="space-y-4">
         <ProbabilityBar
           label="AI-Generated"

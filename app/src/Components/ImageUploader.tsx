@@ -26,7 +26,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload , imagePreview, setI
 
   const handleAddNewImage = () => {
     handeAddNewImage();
-    setImagePreview(null);
+    // setImagePreview(null);
     const input = document.getElementById('imageUpload') as HTMLInputElement;
     if (input) {
       input.value = ''; // Clear the input value 
@@ -64,6 +64,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload , imagePreview, setI
       {/* Preview image */}
       {imagePreview && (
        <img
+        // onClick={()=>handleAddNewImage()}
        src={imagePreview}
        alt="Preview"
        className="w-full sm:w-4/5 md:w-2/3 lg:w-1/2 xl:w-2/5 rounded-2xl shadow-md mx-auto bg-gray-100 p-2 object-contain"
