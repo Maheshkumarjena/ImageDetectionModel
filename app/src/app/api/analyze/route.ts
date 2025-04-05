@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Readable } from 'stream';
 import connectToDB from '../../../../lib/mongodb';
 // import { Image } from 'cloudinary/types/v2';
-
+import { imageAnalysis } from '../../../../lib/imageAnalysis';
 
 console.log("🔁 API Route Initialized: /api/analyze");
 
@@ -59,13 +59,20 @@ export async function POST(req: NextRequest) {
 
     const cloudinaryUrl = await uploadToCloudinary(filePath);
     console.log("☁️ Uploaded to Cloudinary:", cloudinaryUrl);
+    let analysis;
+    const handleAnalysis = async () => {
+      analysis = await imageAnalysis(cloudinaryUrl);
+      console.log("🔍 Final AI Type:", analysis); // You'll get the actual value here
+    };
+    await handleAnalysis()
 
+    console.log("ai generated--------------<>>>>", analysis)
     const fakeResult = {
       label: 'AI-generated',
-      confidence: 91,
-      aiProbability: 91,
-      photoshopProbability: 5,
-      originalProbability: 4,
+      confidence: 0,
+      aiProbability: (analysis.ai_generated)*100,
+      photoshopProbability: Math.random() * 100,
+      originalProbability:(100-((analysis.ai_generated)*100)),
       extraData: 'Simulated prediction data',
     };
 
