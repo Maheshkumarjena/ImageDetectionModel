@@ -44,9 +44,7 @@ export async function POST(req: NextRequest) {
     console.log("📥 File buffer extracted");
 
     const buffer = Buffer.from(bytes);
-    const filePath = path.join(uploadDir, `${Date.now()}-${file.name}`);
-    console.log("💾 Saving file to:", filePath);
-    fs.writeFileSync(filePath, buffer);
+
     console.log("✅ File written locally");
 
     if (typeof connectToDB === 'function') {
@@ -57,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
     console.log("✅ MongoDB connected");
 
-    const cloudinaryUrl = await uploadToCloudinary(filePath);
+    const cloudinaryUrl = await uploadToCloudinary(buffer, file.name);
     console.log("☁️ Uploaded to Cloudinary:", cloudinaryUrl);
     let analysis:any;
     const handleAnalysis = async () => {
