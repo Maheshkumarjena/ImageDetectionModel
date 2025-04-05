@@ -2,6 +2,7 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -9,18 +10,31 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/express": "^5.0.1",
+    "axios": "^1.8.4",
+    "cloudinary": "^2.6.0",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
     "formidable": "^3.5.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2",
+    "multer": "^1.4.5-lts.2",
     "next": "15.2.4",
+    "next-connect": "^1.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sharp": "^0.33.5",
+    "timm": "^1.7.1",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/formidable": "^3.4.5",
-    "@types/node": "^20",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^20.17.30",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5.8.2"
   }
 }

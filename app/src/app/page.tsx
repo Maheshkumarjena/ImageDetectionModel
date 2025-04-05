@@ -27,6 +27,17 @@ const Home: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
 
+  const handeAddNewImage =()=>{
+    setResult({
+      aiProbability: 0,
+      photoshopProbability: 0,
+      originalProbability: 0,
+      extraData: "",
+      label: "",
+      confidence: 0,
+    })
+  }
+
   const handleImageUpload = async (file: File) => {
     setIsLoading(true);
     setErrorMessage(null);
@@ -44,6 +55,8 @@ const Home: React.FC = () => {
         method: 'POST',
         body: formData,
       });
+
+      console.log('response', response);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -77,6 +90,7 @@ const Home: React.FC = () => {
         onUpload={handleImageUpload}
         imagePreview={imagePreview}
         setImagePreview={setImagePreview}
+        handeAddNewImage={handeAddNewImage}
       />
     </div>
     <div className="w-full md:w-1/2 flex justify-center">
@@ -89,6 +103,7 @@ const Home: React.FC = () => {
       onUpload={handleImageUpload}
       imagePreview={imagePreview}
       setImagePreview={setImagePreview}
+      handeAddNewImage={handeAddNewImage}
     />
   </div>
 )}

@@ -5,10 +5,11 @@ interface ImageUploadProps {
     onUpload: (file: File) => void;
     imagePreview: string | null;
     setImagePreview: React.Dispatch<React.SetStateAction<string | null>>;
+    handeAddNewImage: () => void;
   }
   
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload , imagePreview, setImagePreview }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload , imagePreview, setImagePreview ,handeAddNewImage }) => {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -24,10 +25,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload , imagePreview, setI
   };
 
   const handleAddNewImage = () => {
+    handeAddNewImage();
     setImagePreview(null);
     const input = document.getElementById('imageUpload') as HTMLInputElement;
     if (input) {
-      input.value = ''; // Clear the input value
+      input.value = ''; // Clear the input value 
     }
   };
 
