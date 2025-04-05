@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     const cloudinaryUrl = await uploadToCloudinary(filePath);
     console.log("☁️ Uploaded to Cloudinary:", cloudinaryUrl);
-    let analysis;
+    let analysis:any;
     const handleAnalysis = async () => {
       analysis = await imageAnalysis(cloudinaryUrl);
       console.log("🔍 Final AI Type:", analysis); // You'll get the actual value here
@@ -70,9 +70,9 @@ export async function POST(req: NextRequest) {
     const fakeResult = {
       label: 'AI-generated',
       confidence: 0,
-      aiProbability: (analysis.ai_generated)*100,
+      aiProbability: (analysis?.ai_generated)*100,
       photoshopProbability: Math.random() * 100,
-      originalProbability:(100-((analysis.ai_generated)*100)),
+      originalProbability:(100-((analysis?.ai_generated)*100)),
       extraData: 'Simulated prediction data',
     };
 
